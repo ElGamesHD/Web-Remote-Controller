@@ -1,3 +1,4 @@
+import time
 import asyncio
 import websockets
 import pyautogui
@@ -5,11 +6,19 @@ import json
 import cv2
 import numpy as np
 from PIL import ImageGrab
-import base64
+from mss import mss
 
 FULL_HD = (1920, 1080)
 HD = (1080, 720)
 P480 = (640, 480)
+
+sct = mss()
+
+screen_size = pyautogui.size()
+screen_width = screen_size.width
+screen_height = screen_size.height
+
+monitor = {"top": 0, "left": 0, "width": screen_width, "height": screen_height}
 
 # Función para mover el cursor del ratón a una posición específica y hacer clic
 def click_mouse(x, y):
@@ -29,9 +38,28 @@ def capture_screen():
 async def send_screenshot(websocket, path):
     try:
         while True:
-            screen_data = capture_screen()  # Capturar pantalla
-            await websocket.send(base64.b64encode(cv2.imencode('.jpg', screen_data)[1]).decode('utf-8'))  # Enviar captura a cliente
-            await asyncio.sleep(0)  # Esperar un poco antes de la siguiente captura
+            start_time = time.time()
+
+            # Capturar pantalla y reducir resolución si es necesario
+            screen_data = sct.grab(monitor)
+            screen_np = np.array(screen_data)
+            # Reducir la resolución si es necesario (por ejemplo, a HD)
+            # screen_np = cv2.resize(screen_np, HD)
+
+            # Convertir y comprimir a JPEG
+            _, buffer = cv2.imencode('.jpg', screen_np, [int(cv2.IMWRITE_JPEG_QUALITY), 80])
+            jpeg_bytes = buffer.tobytes()
+
+            # Enviar los datos binarios JPEG a través del WebSocket
+            await websocket.send(jpeg_bytes)
+
+            # Medir y mostrar la velocidad de envío
+            elapsed_time = time.time() - start_time
+            print(f"FPS de envío: {1 / elapsed_time}")
+
+            # Esperar un breve período de tiempo antes de la siguiente captura (opcional)
+            # await asyncio.sleep(0.05)  # Ajusta según sea necesario
+            
     except websockets.exceptions.ConnectionClosedError:
         pass
 
@@ -51,8 +79,8 @@ async def main(websocket, path):
 
                 screen_size = pyautogui.size()
 
-                real_x = screen_size.width * (x / img_w)
-                real_y = screen_size.height * (y / img_h)
+                real_x = screen_width * (x / img_w)
+                real_y = screen_height * (y / img_h)
 
                 print("Coordenadas del ratón:", int(real_x), int(real_y))
                 click_mouse(real_x, real_y)

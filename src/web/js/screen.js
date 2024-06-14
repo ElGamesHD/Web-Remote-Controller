@@ -2,8 +2,13 @@ const wsUrl = 'ws://192.168.1.141:8765';
 const screenshotImg = document.getElementById('screen_share');
 const socket = new WebSocket(wsUrl);
 
+socket.binaryType = 'arraybuffer';
+
 socket.onmessage = function (event) {
-    screenshotImg.src = 'data:image/jpeg;base64,' + event.data;
+    const bytes = new Uint8Array(event.data);
+    const blob = new Blob([bytes], { type: 'image/jpeg' });
+    const url = URL.createObjectURL(blob);
+    screenshotImg.src = url;
 };
 
 socket.onerror = function (error) {
@@ -28,7 +33,7 @@ screenshotImg.addEventListener('click', function (event) {
 });
 
 function openFullscreen() {
-    const elem = document.getElementById("screenshot");
+    const elem = document.getElementById("screen_share");
 
     if (elem.requestFullscreen) {
         elem.requestFullscreen();
