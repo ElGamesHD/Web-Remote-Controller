@@ -9,6 +9,8 @@ import mimetypes
 TCP_IP = "0.0.0.0"
 TCP_PORT = 12345
 
+PREFIX = "src/web/"
+
 # Crear un socket TCP
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.bind((TCP_IP, TCP_PORT))
@@ -45,16 +47,16 @@ while True:
 
             if request_method == "GET":
                 if path == "/":
-                    file_path = "index.html"
+                    file_path = PREFIX + "index.html"
                 elif path == "/info":
-                    file_path = "info.html"
+                    file_path = PREFIX + "info.html"
                 elif path == "/info.json":
                     file_path = None
                     response_body = json.dumps(get_computer_info())
                 elif path == "/screen":
-                    file_path = "screen.html"
+                    file_path = PREFIX + "screen.html"
                 else:
-                    file_path = path.lstrip("/")
+                    file_path = PREFIX + path.lstrip("/")
 
                 if file_path and os.path.exists(file_path):
                     with open(file_path, "rb") as file:
@@ -82,10 +84,8 @@ while True:
 
                     response = response_headers.encode('utf-8') + response_body.encode('utf-8')
 
-                # Enviar la respuesta HTTP
                 conn.sendall(response)
 
-        # Cerrar la conexión
         conn.close()
 
     except Exception as e:
