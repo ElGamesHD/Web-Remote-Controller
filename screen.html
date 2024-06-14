@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de pantalla</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            /*display: flex;
+            justify-content: center;*/
+        }
+
+        #screenshot {
+            height: 100%;
+            width: auto;
+            display: block;
+        }
+    </style>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <img id="screenshot" src="" alt="Captura de pantalla">
+    <button onclick="openFullscreen();">Open Video in Fullscreen Mode</button>
+
+    <script>
+        // URL del servidor WebSocket
+        const wsUrl = 'ws://192.168.1.141:8765';
+
+        // Obtener referencia al elemento de imagen
+        const screenshotImg = document.getElementById('screenshot');
+
+        // Crear conexión WebSocket
+        const socket = new WebSocket(wsUrl);
+
+        // Manejar la recepción de datos del servidor WebSocket
+        socket.onmessage = function (event) {
+            // Actualizar el src de la imagen con los datos recibidos
+            screenshotImg.src = 'data:image/jpeg;base64,' + event.data;
+        };
+
+        // Manejar errores de conexión
+        socket.onerror = function (error) {
+            console.error('WebSocket error:', error);
+        };
+
+        // Manejar cierre de conexión
+        socket.onclose = function (event) {
+            console.log('WebSocket connection closed:', event);
+        };
+
+        // Función para enviar posición del ratón al servidor cuando se hace clic en la pantalla
+        screenshotImg.addEventListener('click', function (event) {
+            const x = event.clientX;  // Coordenada x del clic
+            const y = event.clientY;  // Coordenada y del clic
+            const message = JSON.stringify({
+                x: x,
+                y: y,
+                img_w: screenshotImg.offsetWidth,
+                img_h: screenshotImg.offsetHeight
+            });  // Convertir coordenadas a formato JSON
+            socket.send(message);  // Enviar mensaje al servidor WebSocket
+        });
+    </script>
+    <!-- Scripts de Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <script>
+        var elem = document.getElementById("myvideo");
+        function openFullscreen() {
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen();
+            }
+        }
+    </script>
+
+</body>
+
+</html>
