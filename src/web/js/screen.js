@@ -1,4 +1,4 @@
-const wsUrl = 'ws://192.168.1.141:8765';
+const wsUrl = 'ws://192.168.245.139:8765';
 const screenshotImg = document.getElementById('screen_share');
 const socket = new WebSocket(wsUrl);
 

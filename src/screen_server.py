@@ -8,6 +8,7 @@ from mss import mss
 import pyautogui
 import time
 import signal
+import dxcam
 
 class WRC:
 
@@ -17,7 +18,9 @@ class WRC:
 
         self.screen_width = pyautogui.size().width
         self.screen_height = pyautogui.size().height
-        self.monitor = {"top": 0, "left": 0, "width": self.screen_width, "height": self.screen_height}
+
+        self.camera = dxcam.create()
+        self.camera.start(target_fps=60)
 
         self.active = True
 
@@ -26,23 +29,18 @@ class WRC:
         pyautogui.click(x, y)
         pyautogui.moveTo(old_x, old_y)
 
-    def capture_screen(self):
-        return self.sct.grab(self.monitor)
-
     def spin(self):
         while self.active:
             if self.clients:
                 try:
                     start_time = time.time()
 
-                    screen_data = self.capture_screen()
-                    screen_np = np.array(screen_data)
+                    screen_np = self.camera.get_latest_frame()
                     capture_time = time.time() - start_time
 
-                    _, buffer = cv2.imencode('.jpg', screen_np, [int(cv2.IMWRITE_JPEG_QUALITY), 80])
-                    jpeg_bytes = buffer.tobytes()
+                    jpeg_bytes= cv2.imencode(".jpg", screen_np)[1].tobytes()
                     jpg_time = time.time() - (capture_time + start_time)
-
+                
                     asyncio.run(self.send_frames(jpeg_bytes))
                     send_time = time.time() - (jpg_time + capture_time + start_time)
 
@@ -97,7 +95,6 @@ class WRC:
             while self.active:
                 await asyncio.sleep(1)
         print("Deteniendo websocket...")
-        await asyncio.sleep(2)
 
     def execute_socket_thread(self):
         asyncio.run(self.socket_thread())
