@@ -20,9 +20,11 @@ socket.onclose = function (event) {
 };
 
 screenshotImg.addEventListener('click', function (event) {
-    console.log("click");
-    const x = event.clientX;
-    const y = event.clientY;
+    console.log("Click");
+
+    const x = event.clientX - screenshotImg.offsetLeft; // Le quitamos el offset de la imagen
+    const y = event.clientY - screenshotImg.offsetTop;
+
     const message = JSON.stringify({
         x: x,
         y: y,

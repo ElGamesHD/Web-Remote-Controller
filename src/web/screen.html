@@ -12,9 +12,11 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 
-<body style="height: 100%;">
-    <img id="screen_share" src="" alt="Pantalla compartida">
-    <button class="btn btn-primary" onclick="openFullscreen();">Pantalla completa</button>
+<body class="bg-dark">
+    <div class="d-flex flex-column">
+        <img draggable="false" id="screen_share" src="" alt="Pantalla compartida">
+        <button class="btn btn-primary" onclick="openFullscreen();">Pantalla completa</button>
+    </div>
 
     <!-- Scripts -->
     <script src="/js/screen.js"></script>

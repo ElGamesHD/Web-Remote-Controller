@@ -49,7 +49,7 @@ class WebsocketServer:
 
     async def echo(self, websocket, _):
         self.clients.append(websocket)
-        print(f">> ENTRADA: Nuevo cliente conectado: {websocket.remote_address[0]}:{websocket.remote_address[1]}" +
+        print(f">> ENTRADA: Nuevo cliente conectado: {websocket.remote_address[0]}:{websocket.remote_address[1]} " +
               f"(Conexiones activas: {len(self.clients)})")
 
         try:
@@ -59,7 +59,7 @@ class WebsocketServer:
             print(">> ERROR AL RECIBIR: " + str(e))
         finally:
             self.clients.remove(websocket)
-            print(f">> SALIDA: Cliente desconectado: {websocket.remote_address[0]}:{websocket.remote_address[1]}" +
+            print(f">> SALIDA: Cliente desconectado: {websocket.remote_address[0]}:{websocket.remote_address[1]} " +
                   f"(Conexiones activas: {len(self.clients)})")
 
     def start(self):

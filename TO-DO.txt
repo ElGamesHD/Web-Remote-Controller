@@ -19,5 +19,5 @@ arreglar lo de que no se conecta bien por la cara
 errores:
 lo de Antes de RECV que se queda pillao por la cara
 hacer el envio mas rapido probar con la camara
-
+fix pantalla comlpeta movil
 el websocket va lento porque no para de mandar imagenes, ver si es mejor abrir dos sockets o si se puede hacer bidireccional
