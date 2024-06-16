@@ -9,7 +9,8 @@ import websockets
 
 import dxcam
 import pyautogui
-
+from mss import mss
+import numpy as np
 
 class WRC:
 
@@ -18,14 +19,27 @@ class WRC:
         self.process_message = process_message
 
         self.clients = []
+        self.sct = mss()
 
         self.screen_width = pyautogui.size().width
         self.screen_height = pyautogui.size().height
+        self.monitor = {"top": 0, "left": 0, "width": self.screen_width, "height": self.screen_height}
 
-        self.camera = dxcam.create(output_color="BGR")
+        self.camera = dxcam.create(output_color="BGR", device_idx=0)
         self.camera.start(target_fps=120)
 
         self.active = True
+    
+    def frame_mss(self): # Slower but always work
+        return np.array(self.sct.grab(self.monitor))
+
+    def frame_dxcam(self): # Faster but sometimes dont work
+        return self.camera.get_latest_frame()
+    
+    def start(self):
+        socket_thread = threading.Thread(target=self.execute_socket_thread)
+        socket_thread.start()
+        self.screen_share()
 
     def screen_share(self):
         while self.active:
@@ -33,7 +47,7 @@ class WRC:
                 try:
                     start_time = time.time()
 
-                    screen_np = self.camera.get_latest_frame()
+                    screen_np = self.frame_mss()
                     capture_time = time.time() - start_time
 
                     jpeg_bytes= cv2.imencode(".jpg", screen_np)[1].tobytes()
@@ -98,18 +112,15 @@ class WRC:
     def execute_socket_thread(self):
         asyncio.run(self.socket_thread())
 
-    def signal_handler(self, sig, frame):
-        self.active = False
-        print("\CTRL + C detectado. Apagando...")
+wrc = WRC(None, None)
+def signal_handler(sig, frame):
+    wrc.active = False
+    print("\nCTRL + C detectado. Apagando...")
 
 def main(args=None):
-    wrc = WRC()
-    signal.signal(signal.SIGINT, wrc.signal_handler)
-
-    socket_thread = threading.Thread(target=wrc.execute_socket_thread)  # Escucha clientes
-    socket_thread.start()
-
-    wrc.screen_share()
+    signal.signal(signal.SIGINT, signal_handler)
+    
+    wrc.start()
 
 if __name__ == "__main__":
     main()
