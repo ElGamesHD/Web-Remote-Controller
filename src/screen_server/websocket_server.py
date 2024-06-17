@@ -41,12 +41,16 @@ class WebsocketServer:
 
         print("Saliendo del bucle de envio...")
 
-    async def send_frame(self, jpeg_bytes):     
+    async def send_frame(self, jpeg_bytes):  
+        tasks = [asyncio.create_task(self.send_to_client(client, jpeg_bytes)) for client in self.clients]
+
+        await asyncio.wait(tasks)   
+
+    async def send_to_client(self, client, message):
         try:
-            for client in self.clients:
-                await client.send(jpeg_bytes)
-        except Exception:
-            pass
+            await client.send(message)
+        except Exception as e:
+            print(">> ERROR AL ENVIAR: " + str(e))
 
     async def echo(self, websocket, _):
         self.clients.append(websocket)

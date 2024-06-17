@@ -5,3 +5,4 @@
 - ¿App movil?
 - Autopyit
 - Fix pantalla completa movil
+- Websocket se desconecta sin sentido
