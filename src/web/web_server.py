@@ -1,9 +1,10 @@
-from flask import Flask, jsonify, render_template, send_from_directory
+from flask import Flask, render_template
 import socket
 import platform
 import sys
 
 app = Flask(__name__)
+screen_server_port = 36743
 
 @app.route('/')
 def index():
@@ -19,7 +20,10 @@ def info():
 
 @app.route('/screen')
 def screen():
-    return render_template('screen.html')
+    return render_template('screen.html', ip=socket.gethostbyname(socket.gethostname()), port=screen_server_port)
 
-if __name__ == '__main__':
+def main():
     app.run(host='0.0.0.0', port=12345)
+
+if __name__ == "__main__":
+    main()

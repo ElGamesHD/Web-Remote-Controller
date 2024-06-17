@@ -8,11 +8,11 @@ from screen_capturer.mss_capturer import MSSCapturer
 
 class Controller:
 
-    def __init__(self, screen_capturer):
+    def __init__(self, screen_capturer, port):
         self.screen_width = pyautogui.size().width
         self.screen_height = pyautogui.size().height
 
-        self.server = WebsocketServer(screen_capturer, self.process_message)
+        self.server = WebsocketServer(screen_capturer, self.process_message, port)
 
     def signal_handler(self, sig, frame):
         self.server.active = False
@@ -40,10 +40,11 @@ class Controller:
         pyautogui.click(x, y)
         pyautogui.moveTo(old_x, old_y)
 
-def main(args=None):
+def main():
     screen_capturer = MSSCapturer()
+    port = 36743
 
-    controller = Controller(screen_capturer)
+    controller = Controller(screen_capturer, port)
     controller.start()
 
 if __name__ == "__main__":

@@ -7,10 +7,11 @@ import websockets
 
 class WebsocketServer:
 
-    def __init__(self, screen_capturer, process_message):
+    def __init__(self, screen_capturer, process_message, port):
         self.screen_capturer = screen_capturer
         self.process_message = process_message
 
+        self.port = port
         self.clients = []
 
         self.active = True
@@ -74,7 +75,7 @@ class WebsocketServer:
     async def socket_thread(self):
         print("Iniciando websocket...")
 
-        async with websockets.serve(self.echo, "0.0.0.0", 8765):
+        async with websockets.serve(self.echo, "0.0.0.0", self.port):
             while self.active:
                 await asyncio.sleep(1)
         print("Cerrando websocket...")

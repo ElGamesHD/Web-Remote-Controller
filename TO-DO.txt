@@ -1,23 +1,7 @@
-Hacer un repositorio privado en ElGamesHD
-
-organizar todo en carpetas
-poner auto reconectar al websocket
-poner teclado
-por enlace con una variable de entorno o
-laburar que se coja la ip directamente
-¿que envie sonido?
-
-https://codepen.io/ahmedbnabouelezz/pen/wvWZWjO
-que se mande esa info + si esta pulsado o no y con eso se puede hacer todo
-
-vender como aplicacion que ejecutas y puedes ver desde el movil para monitorizar, acompañar con app del movil si eso
-
-usar autopyit o algo asi para los clicks y todo eso que controla mas el ssoo
-mejorar la velocidad que con la camara con cv2 iba perfe en tiempo real
-arreglar lo de que no se conecta bien por la cara
-
-errores:
-lo de Antes de RECV que se queda pillao por la cara
-hacer el envio mas rapido probar con la camara
-fix pantalla comlpeta movil
-el websocket va lento porque no para de mandar imagenes, ver si es mejor abrir dos sockets o si se puede hacer bidireccional
+- Teclado
+- Auto-reconectar
+- ¿Sonido?
+- https://codepen.io/ahmedbnabouelezz/pen/wvWZWjO + Click or not
+- ¿App movil?
+- Autopyit
+- Fix pantalla completa movil
