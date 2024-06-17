@@ -15,7 +15,7 @@ PREFIX = "src/web/"
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.bind((TCP_IP, TCP_PORT))
 sock.listen(5)  # Permitir múltiples conexiones entrantes
-
+print(__file__)
 print(f"Servidor TCP escuchando en el puerto {TCP_PORT}")
 
 def get_mime_type(file_path):
